@@ -16,9 +16,21 @@ export function ChatApp() {
   const [message, setMessage] = useState('');
   const [files, setFiles] = useState<FileList | null>(null);
   const [sending, setSending] = useState(false);
+codex/create-internal-office-chat-web-app-njscch
+  const [error, setError] = useState('');
 
   async function loadChats() {
     const res = await fetch('/api/chats');
+    if (!res.ok) {
+      setError('Falha ao carregar chats');
+      return;
+    }
+
+=======
+
+  async function loadChats() {
+    const res = await fetch('/api/chats');
+main
     const data = await res.json();
     setChats(data.chats || []);
   }
@@ -32,6 +44,11 @@ export function ChatApp() {
   async function handleSend() {
     if (!message.trim()) return;
     setSending(true);
+codex/create-internal-office-chat-web-app-njscch
+    setError('');
+
+=======
+main
     try {
       const attachedFileIds: string[] = [];
       if (files?.length) {
@@ -40,6 +57,14 @@ export function ChatApp() {
           form.append('file', file);
           form.append('kind', 'chat');
           const up = await fetch('/api/upload', { method: 'POST', body: form });
+codex/create-internal-office-chat-web-app-njscch
+          if (!up.ok) {
+            const upData = await up.json().catch(() => ({}));
+            setError(upData.error || 'Erro ao enviar anexo');
+            return;
+          }
+=======
+main
           const upData = await up.json();
           attachedFileIds.push(upData.attachment.id);
         }
@@ -50,7 +75,17 @@ export function ChatApp() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ mode, chatId, message, attachedFileIds })
       });
+codex/create-internal-office-chat-web-app-njscch
+
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setError(data.error || 'Erro ao enviar mensagem');
+        return;
+      }
+
+=======
       const data = await res.json();
+main
       setChatId(data.chatId);
       setMessage('');
       setFiles(null);
@@ -93,6 +128,11 @@ export function ChatApp() {
           <input type="file" multiple onChange={(e) => setFiles(e.target.files)} />
         </div>
 
+codex/create-internal-office-chat-web-app-njscch
+        {error && <p>{error}</p>}
+
+=======
+main
         <div style={{ minHeight: 320, marginBottom: 10 }}>
           {(selected?.messages || []).map((m) => (
             <div key={m.id} className={`message ${m.role}`}>

@@ -38,6 +38,11 @@ npm run dev
 
 ## Endpoints
 - `POST /api/upload` (`FormData`: `file` + `kind=chat|kb`)
+codex/create-internal-office-chat-web-app-njscch
+  - Limite: 25MB por arquivo
+  - Tipos aceitos: PDF, imagem e áudio
+=======
+main
 - `POST /api/chat` (`mode`, `chatId?`, `message`, `attachedFileIds[]`)
 
 ## Admin
@@ -54,3 +59,14 @@ Busca clássica por keyword scoring no `extractedText` (sem embeddings/sem 3ª I
 3. Suba PDF na KB em `/admin/knowledge`.
 4. No chat, anexe PDF do caso e envie: “reescreva o tópico X”.
 5. O app monta contexto com anexos extraídos + snippets da KB e responde pronto para copiar/colar.
+codex/create-internal-office-chat-web-app-njscch
+
+## Códigos de erro (resumo)
+- `400` payload inválido
+- `401` não autorizado
+- `404` recurso não encontrado
+- `413` arquivo muito grande
+- `415` mídia não suportada
+- `500` erro interno
+=======
+main
