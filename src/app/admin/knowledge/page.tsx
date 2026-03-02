@@ -1,7 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+codex/create-internal-office-chat-web-app-njscch
 import { useRouter } from 'next/navigation';
+=======
+main
 
 type Doc = {
   id: string;
@@ -16,6 +19,7 @@ export default function AdminKnowledgePage() {
   const [title, setTitle] = useState('');
   const [tags, setTags] = useState('');
   const [file, setFile] = useState<File | null>(null);
+codex/create-internal-office-chat-web-app-njscch
   const [error, setError] = useState('');
   const [saving, setSaving] = useState(false);
   const router = useRouter();
@@ -34,10 +38,17 @@ export default function AdminKnowledgePage() {
       return;
     }
 
+=======
+
+  async function load() {
+    const res = await fetch('/api/admin/knowledge');
+    if (!res.ok) return;
+main
     const data = await res.json();
     setDocs(data.docs || []);
   }
 
+codex/create-internal-office-chat-web-app-njscch
   useEffect(() => {
     load();
   }, []);
@@ -90,10 +101,37 @@ export default function AdminKnowledgePage() {
   async function toggle(doc: Doc) {
     setError('');
     const res = await fetch(`/api/admin/knowledge/${doc.id}`, {
+=======
+  useEffect(() => { load(); }, []);
+
+  async function createDoc() {
+    if (!file) return;
+    const form = new FormData();
+    form.append('file', file);
+    form.append('kind', 'kb');
+    const up = await fetch('/api/upload', { method: 'POST', body: form });
+    const upData = await up.json();
+
+    await fetch('/api/admin/knowledge', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ title: title || file.name, tags, attachmentId: upData.attachment.id })
+    });
+
+    setTitle('');
+    setTags('');
+    setFile(null);
+    await load();
+  }
+
+  async function toggle(doc: Doc) {
+    await fetch(`/api/admin/knowledge/${doc.id}`, {
+main
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ active: !doc.active })
     });
+codex/create-internal-office-chat-web-app-njscch
 
     if (res.status === 401) {
       router.push('/admin/login');
@@ -106,18 +144,27 @@ export default function AdminKnowledgePage() {
       return;
     }
 
+=======
+main
     await load();
   }
 
   return (
     <div className="card">
       <h2>Base de conhecimento</h2>
+codex/create-internal-office-chat-web-app-njscch
       {error && <p>{error}</p>}
+=======
+main
       <div className="row" style={{ marginBottom: 10 }}>
         <input placeholder="Título" value={title} onChange={(e) => setTitle(e.target.value)} />
         <input placeholder="Tags (vírgula)" value={tags} onChange={(e) => setTags(e.target.value)} />
         <input type="file" onChange={(e) => setFile(e.target.files?.[0] || null)} />
+codex/create-internal-office-chat-web-app-njscch
         <button onClick={createDoc} disabled={saving}>{saving ? 'Enviando...' : 'Upload na KB'}</button>
+=======
+        <button onClick={createDoc}>Upload na KB</button>
+main
       </div>
 
       {docs.map((d) => (

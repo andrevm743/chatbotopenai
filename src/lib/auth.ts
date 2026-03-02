@@ -1,3 +1,4 @@
+codex/create-internal-office-chat-web-app-njscch
 import { createHmac, timingSafeEqual } from 'crypto';
 import { cookies } from 'next/headers';
 import { AppError } from './http';
@@ -37,10 +38,16 @@ function verifySession(token: string) {
   const expiresAt = Number(exp);
   return Number.isFinite(expiresAt) && Date.now() < expiresAt;
 }
+=======
+import { cookies } from 'next/headers';
+
+const ADMIN_COOKIE = 'admin_session';
+main
 
 export async function isAdminAuthenticated() {
   const store = await cookies();
   const token = store.get(ADMIN_COOKIE)?.value;
+codex/create-internal-office-chat-web-app-njscch
   if (!token) return false;
 
   try {
@@ -48,11 +55,15 @@ export async function isAdminAuthenticated() {
   } catch {
     return false;
   }
+=======
+  return Boolean(token && process.env.ADMIN_PASSWORD && token === process.env.ADMIN_PASSWORD);
+main
 }
 
 export async function requireAdmin() {
   const ok = await isAdminAuthenticated();
   if (!ok) {
+codex/create-internal-office-chat-web-app-njscch
     throw new AppError(401, 'UNAUTHORIZED', 'Não autorizado');
   }
 }
@@ -74,3 +85,18 @@ export async function clearAdminSession() {
   const store = await cookies();
   store.delete(ADMIN_COOKIE);
 }
+=======
+    throw new Error('UNAUTHORIZED');
+  }
+}
+
+export async function setAdminSession(password: string) {
+  const store = await cookies();
+  store.set(ADMIN_COOKIE, password, {
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: process.env.NODE_ENV === 'production',
+    path: '/'
+  });
+}
+main

@@ -1,12 +1,16 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+codex/create-internal-office-chat-web-app-njscch
 import { useRouter } from 'next/navigation';
+=======
+main
 
 type Prompt = { mode: string; content: string };
 
 export default function AdminPromptsPage() {
   const [prompts, setPrompts] = useState<Prompt[]>([]);
+codex/create-internal-office-chat-web-app-njscch
   const [error, setError] = useState('');
   const router = useRouter();
 
@@ -24,6 +28,12 @@ export default function AdminPromptsPage() {
       return;
     }
 
+=======
+
+  async function load() {
+    const res = await fetch('/api/admin/prompts');
+    if (!res.ok) return;
+main
     const data = await res.json();
     setPrompts(data.prompts);
   }
@@ -33,11 +43,16 @@ export default function AdminPromptsPage() {
   }, []);
 
   async function save(mode: string, content: string) {
+codex/create-internal-office-chat-web-app-njscch
     const res = await fetch('/api/admin/prompts', {
+=======
+    await fetch('/api/admin/prompts', {
+main
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ mode, content })
     });
+codex/create-internal-office-chat-web-app-njscch
 
     if (res.status === 401) {
       router.push('/admin/login');
@@ -65,6 +80,14 @@ export default function AdminPromptsPage() {
         <button onClick={logout}>Sair</button>
       </div>
       {error && <p>{error}</p>}
+=======
+    await load();
+  }
+
+  return (
+    <div className="card">
+      <h2>Prompts por modo</h2>
+main
       {prompts.map((p) => (
         <div key={p.mode} style={{ marginBottom: 16 }}>
           <h3>{p.mode}</h3>

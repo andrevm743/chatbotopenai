@@ -19,6 +19,7 @@ enum FileKind {
 }
 
 model Chat {
+codex/create-internal-office-chat-web-app-njscch
   id         String    @id @default(cuid())
   title      String
   mode       Mode
@@ -40,6 +41,29 @@ model Message {
 
 model Attachment {
   id            String              @id @default(cuid())
+=======
+  id        String    @id @default(cuid())
+  title     String
+  mode      Mode
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  messages  Message[]
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  chatId    String
+  role      String
+  content   String
+  mode      Mode
+  createdAt DateTime @default(now())
+
+  chat      Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
+}
+
+model Attachment {
+  id            String   @id @default(cuid())
+main
   filename      String
   originalName  String
   mimeType      String
@@ -48,6 +72,7 @@ model Attachment {
   path          String
   extractedText String?
   metadataJson  String?
+codex/create-internal-office-chat-web-app-njscch
   createdAt     DateTime            @default(now())
   messages      MessageAttachment[]
 }
@@ -61,6 +86,9 @@ model MessageAttachment {
   attachment   Attachment @relation(fields: [attachmentId], references: [id], onDelete: Cascade)
 
   @@id([messageId, attachmentId])
+=======
+  createdAt     DateTime @default(now())
+main
 }
 
 model Prompt {

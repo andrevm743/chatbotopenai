@@ -1,3 +1,4 @@
+codex/create-internal-office-chat-web-app-njscch
 const REQUEST_TIMEOUT_MS = 45_000;
 
 async function withRetry(request: () => Promise<Response>) {
@@ -24,6 +25,8 @@ async function withRetry(request: () => Promise<Response>) {
   throw lastError instanceof Error ? lastError : new Error('Claude request failed');
 }
 
+=======
+main
 export async function askClaude(params: {
   systemPrompt: string;
   userPrompt: string;
@@ -35,6 +38,7 @@ export async function askClaude(params: {
     return 'ANTHROPIC_API_KEY não configurada. Não foi possível gerar resposta.';
   }
 
+codex/create-internal-office-chat-web-app-njscch
   const response = await withRetry(async () => {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
@@ -66,5 +70,28 @@ export async function askClaude(params: {
   }
 
   const data = await response.json();
+=======
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json',
+      'x-api-key': key,
+      'anthropic-version': '2023-06-01'
+    },
+    body: JSON.stringify({
+      model,
+      max_tokens: 2048,
+      system: params.systemPrompt,
+      messages: [{ role: 'user', content: params.userPrompt }]
+    })
+  });
+
+  if (!res.ok) {
+    const txt = await res.text();
+    throw new Error(`Claude error: ${txt}`);
+  }
+
+  const data = await res.json();
+main
   return data?.content?.map((part: { type: string; text?: string }) => (part.type === 'text' ? part.text : '')).join('\n') || '';
 }
